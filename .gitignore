@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+*.egg-info/
+
+# Environment
+.env
+
+# Data
+data/raw/*
+data/processed/*
+*.csv
