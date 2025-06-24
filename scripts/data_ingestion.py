@@ -10,19 +10,29 @@ api_id = os.getenv('API_ID')
 api_hash = os.getenv('API_HASH')
 phone_number = os.getenv('PHONE_NUMBER')
 
-# Define channels to scrape
-channels = ['@animationsz']  # Replace with actual channel names
+# Define six Ethiopian e-commerce Telegram channels
+channels = [
+    '@Leyueqa',
+    '@helloomarketethiopia',
+    '@AwasMart',
+    '@efuyegellaMarket',
+    '@abaymart',
+]
 
 # Initialize Telegram client
 client = TelegramClient('session_name', api_id, api_hash)
 
 async def main():
-    await client.start(phone=phone_number)
+    # Start client with 2FA support
+    await client.start(
+        phone=phone_number,
+        password=lambda: input("Please enter your 2FA password: ") if os.getenv('TELEGRAM_2FA_PASSWORD') else None
+    )
     data = []
 
     for channel in channels:
         try:
-            async for message in client.iter_messages(channel, limit=50):  # Reduced limit for interim submission
+            async for message in client.iter_messages(channel, limit=50):
                 if message.text or message.photo:
                     data.append({
                         'channel': channel,
@@ -37,7 +47,7 @@ async def main():
 
     # Save to CSV
     df = pd.DataFrame(data)
-    df.to_csv('data\\raw\\telegram_data.csv', index=False, encoding='utf-8')
+    df.to_csv('data\\raw\\telegram_data.csv', index=False, encoding='utf-8-sig')
     print("Data saved to data\\raw\\telegram_data.csv")
 
 with client:
